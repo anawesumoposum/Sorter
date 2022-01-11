@@ -1,11 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+const appConfig = {
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".jsx"],
+        extensions: [".ts", ".tsx", ".js", ".jsx", "wasm"],
     },
-    mode: 'development',
+    mode: 'development',//'production'
     entry: path.join(__dirname, "src", "index.js"),
     output: {
         filename: "bundle.js",
@@ -41,13 +41,15 @@ module.exports = {
             },
             {
                 test: /\.wasm$/,
-                type: "javascript/auto",
-                use: {
-                    loader: 'file-loader',
-                    options: {
-                        publicPath: "/prod/"
-                    }
-                }
+                //type: "javascript/auto",
+                //type: "webassembly/experimental",
+                mimetype: "application/wasm",
+                use: 'wasm-loader',
+                    //loader: 'file-loader',
+                    //options: {
+                        //publicPath: "/prod/"
+                    //}
+                
             },
         ],
     },
@@ -57,3 +59,9 @@ module.exports = {
         }),
     ],
 }
+
+/*const workerConfig = {
+
+}*/
+
+module.exports = appConfig//, workerConfig]

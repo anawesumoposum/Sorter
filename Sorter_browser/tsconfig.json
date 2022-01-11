@@ -1,13 +1,19 @@
 {
     "compilerOptions": {
+        "outDir": "./prod",
         "sourceMap": true,
         "jsx": "react",
         "target": "ES6",
         "allowJs": true,
         "esModuleInterop": true,
         "module": "es2020",
+        "moduleResolution": "node", //allows looking within node_modules for my wasm local module
+        "baseUrl": "./",
     },
     "include": [
         "src"
+    ],
+    "exclude": [
+        "./prod/*"
     ]
 }

@@ -2,6 +2,10 @@
   "name": "sorter_browser",
   "version": "1.0.0",
   "description": "Sorting visualizer with webworkers and wasm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericnsibley/Sorter.git"
+  },
   "main": "index.js",
   "scripts": {
     "start": "webpack serve",
@@ -15,7 +19,8 @@
     "file-loader": "^6.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "style-loader": "^3.3.1"
+    "style-loader": "^3.3.1",
+    "wasm-loader": "^1.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",

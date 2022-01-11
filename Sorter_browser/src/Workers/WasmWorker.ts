@@ -1,5 +1,5 @@
 import * as wasm from "algorithms_in_rust_for_wasm";
-//const wasm = require("algorithms_in_rust_for_wasm"); 
+
 //export {};
 //const wasm = import("./asyncLoad.js")
 //    .catch((e) => console.error("Error importing wasm within asyncLoad", e));
