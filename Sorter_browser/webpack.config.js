@@ -9,8 +9,8 @@ const appConfig = {
     entry: path.join(__dirname, "src", "index.js"),
     output: {
         filename: "bundle.js",
-        path: path.resolve(__dirname, "prod"),
-        publicPath: "/prod/",
+        path: path.resolve(__dirname, "Sorter"),
+        publicPath: "/Sorter/",
     },
     experiments: {
         syncWebAssembly: true,
