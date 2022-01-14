@@ -1,13 +1,11 @@
 <h1>Sorter</h1>
+
 <h3>A sorting algorithm visualizer by Eric Sibley</h3>
-<br />
 <h3>Available for viewing on https://ericnsibley.github.io/Sorter/</h3>
-<br />
 
 <h2>Description:</h2>
 <p>This project generates an array of random integers, visualized by using their value as height. Then, using the sorting algorithm chosen by the user, it will call upon multiple subroutines to perform the sort in different languages in parallel. This project also serves as an excuse for me to teach myself Web Assembly.</p>
 <p>Currently implemented are TypeScript and Web Assembly that has been compiled from Rust. This is why the project is split into algorithms_in_rust_for_wasm and Sorter_browser</p>
-<br />
 
 <h2>Challenges:</h2>
 <h3>Parallelization:</h3>
@@ -21,12 +19,11 @@ This facillitates a snappy, interactive test bench for comparing language perfor
 <h3>Why Web Assembly + Web Workers:</h3>
 <p>- Two reasons. <br />
 0) Beyond superficially performing a test bench across languages, I chose WASM to run in Web Workers because to me, that was the obvious place for them to run. JS strikes me as having great async support, but what if I have large compute costs and don't want to block my main event loop? In most situations I'd want to offload this computation onto another resource such as my server. But what if, for some unforseen reason, I absolutely HAVE to perform this calculation in the client's browser? Or, perhaps WASM is fast enough that I no longer have to pay for my server to perform clients' calculations? <br />
-1) I'm looking for good excuses to learn more Rust! As of writing this, I'm still pretty new to the language, and need projects to get myself ready for writing production-ready code. <br />
+1) I'm looking for good excuses to learn more Rust! As of writing this, I'm still pretty new to the language, and need projects to get myself ready for writing production-ready code.
 </p>
-<br />
 
 <h2>Usage:</h2>
-<p>Before you treat this as any other NPM app, first notice that we have a dependency on the locally built Rust-produced WASM. Let's build the WASM first.</p><br />
+<p>Before you treat this as any other NPM app, first notice that we have a dependency on the locally built Rust-produced WASM. Let's build the WASM first.</p>
 
 <h3>Building WASM</h3>
 <p>Inside of /Sorter/algorithms_in_rust_for_wasm
@@ -65,7 +62,6 @@ npm run start
 
 and navigate to http://localhost:8080/Sorter/
 </p>
-<br />
 
 <h3>TODO</h3>
     - wasm isn't currently callable in TS. At first I thought it was the loader, but I fixed that. Now I'm not sure
