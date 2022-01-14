@@ -45,7 +45,6 @@ to stop producing wasm, and then you can do your normal
 
 ```
 cargo build
-cargo run
 cargo test
 ```
 </p>
@@ -64,11 +63,16 @@ and navigate to http://localhost:8080/Sorter/
 </p>
 
 <h3>TODO</h3>
-    - wasm isn't currently callable in TS. At first I thought it was the loader, but I fixed that. Now I'm not sure
+    - wasm isn't currently callable in TS. At first I thought it was the loader, but I fixed that. Now I'm not sure 
+    <br>
     - add a license, I'm thinking copyleft so GNU GPLv3
+    <br>
     - animation colors
-    - header bar or side bar for routing
-      - once routing is implemented I'll want to host on AWS for a unified portfolio domain
+    <br>
+    - header bar or side bar for routing, once routing is implemented I'll want to host on AWS for a unified portfolio domain and probably serve from node
+    <br>
     - dynamic number of bars based on screen size? 
+    <br>
     - slider bar for number of bars? 
+    <br>
     - way more sorts! 
