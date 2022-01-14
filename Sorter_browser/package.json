@@ -6,10 +6,12 @@
     "type": "git",
     "url": "https://github.com/ericnsibley/Sorter.git"
   },
+  "homepage": "http://ericnsibley.github.io/Sorter",
   "main": "index.js",
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack"
+    "build": "webpack",
+    "deploy": "gh-pages -d Sorter"
   },
   "author": "Eric Sibley",
   "license": "ISC",

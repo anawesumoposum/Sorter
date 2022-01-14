@@ -67,8 +67,6 @@ and navigate to http://localhost:8080/Sorter/
     <br>
     - add a license, I'm thinking copyleft so GNU GPLv3
     <br>
-    - animation colors
-    <br>
     - header bar or side bar for routing, once routing is implemented I'll want to host on AWS for a unified portfolio domain and probably serve from node
     <br>
     - dynamic number of bars based on screen size? 

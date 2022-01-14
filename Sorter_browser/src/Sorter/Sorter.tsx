@@ -1,11 +1,12 @@
 import React from 'react';
 import './Sorter.css';
 
-//const BLUE = 'cornflowerblue';
-//const RED = 'firebrick';
+const size = 300;
+
 
 type SorterState = {
     array: number[];
+    didChange: number[];
     tsWorker: Worker,
     tsTime: number,
     wasmWorker: Worker,
@@ -15,7 +16,8 @@ type SorterState = {
     animations: Animation[];
 }
 
-export type Animation = {
+export type Animation = {   
+    //the values are indexes that are modified by a step of sorting - I don't have to store values!
     from: number[];
     to: number[];
 }
@@ -27,6 +29,7 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
         this.state = {
             array: [],
+            didChange: [],
             tsWorker: new Worker(new URL("../Workers/TypescriptWorker.ts", import.meta.url)),
             tsTime: 0,
             wasmWorker: new Worker(new URL("../Workers/WasmWorker.ts", import.meta.url)),
@@ -77,13 +80,13 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
 
     newArray = (): void => {
-        const array: number[] = [];
-        let size = 300;
-        for(let i = 0; i < size; i++) {
-            array.push(Math.floor(Math.random() * size + 1));
-        }
+        let array = new Array(size);
+        for(let i=0; i<size; i++) array[i] = Math.floor(Math.random() * size + 1);
+        let didChange = new Array(size); 
+        for (let i=0; i<size; ++i) didChange[i] = 0;
         this.setState({
             array: array,
+            didChange: didChange,
             tsTime: 0,
             wasmTime: 0,
             animationTime: 0,
@@ -113,17 +116,23 @@ export default class Sorter extends React.Component<{}, SorterState> {
             setTimeout(
                 () => {
                     let tempArray = this.state.array.slice(0); //google says this is fastest way to copy array
+                    let didChange = new Array(size); for (let i=0; i<size; ++i) didChange[i] = 0;   //reset to 0 each time
                     let from = animations[iter].from;
                     let to = animations[iter].to;
                     if (from.length !== to.length) return; //should always be same length and mapping
+
                     let swap: number[] = [];
                     for (let jter = 0; jter < from.length; jter++) {    //store swap numbers
                         swap.push(tempArray[from[jter]]);
+                        didChange[from[jter]] = 1;
                     }
                     for (let jter = 0; jter < swap.length; jter++) {
                         tempArray[to[jter]] = swap[jter];
                     }
-                    this.setState({array: tempArray});
+                    this.setState({
+                        array: tempArray,
+                        didChange: didChange
+                    });
                 }, 
                 3//ms to allow eye to follow
             );
@@ -133,8 +142,10 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
     render() {
         const bars = this.state.array.map((value, key) => {
-            return <div className="bar" key={key} style={{height: value}}>
-            </div>;
+            if (this.state.didChange[key]) 
+                return <div className="bar" key={key} style={{height: value, backgroundColor: 'firebrick'}}></div>;
+            else
+                return <div className="bar" key={key} style={{height: value, backgroundColor: 'cornflowerblue'}}></div>;
         });
 
         return (
