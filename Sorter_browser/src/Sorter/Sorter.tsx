@@ -7,6 +7,7 @@ const size = 300;
 type SorterState = {
     array: number[];
     didChange: number[];
+    running: boolean,
     tsWorker: Worker,
     tsTime: number,
     wasmWorker: Worker,
@@ -30,6 +31,7 @@ export default class Sorter extends React.Component<{}, SorterState> {
         this.state = {
             array: [],
             didChange: [],
+            running: false,
             tsWorker: new Worker(new URL("../Workers/TypescriptWorker.ts", import.meta.url)),
             tsTime: 0,
             wasmWorker: new Worker(new URL("../Workers/WasmWorker.ts", import.meta.url)),
@@ -47,28 +49,32 @@ export default class Sorter extends React.Component<{}, SorterState> {
         // eslint-disable-next-line
         this.state.animationWorker.onmessage = (event: MessageEvent) => {
             console.log('animation worker responded');
-            this.setState({
-                animationTime: event.data[0],
-                animations: event.data[1]
-            },
-                () => this.startViz() 
-            );
+            if (!this.state.running)    //cleanup in case user clicks faster than setState can cut off new startWorkers calls
+                this.setState({
+                    animationTime: event.data[0],
+                    animations: event.data[1],
+                    running: true
+                },
+                    () => this.startViz() 
+                );
         };
 
         // eslint-disable-next-line
         this.state.tsWorker.onmessage = (event: MessageEvent) => {
             console.log('ts worker responded');
-            this.setState({
-                tsTime: event.data[0],
-            });
+            if (!this.state.running) 
+                this.setState({
+                    tsTime: event.data[0],
+                });
         }
 
         // eslint-disable-next-line
         this.state.wasmWorker.onmessage = (event: MessageEvent) => {
             console.log('wasm worker responded');
-            this.setState({
-                wasmWorker: event.data[0],
-            });
+            if (!this.state.running) 
+                this.setState({
+                    wasmWorker: event.data[0],
+                });
         }
     }
 
@@ -80,6 +86,7 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
 
     newArray = (): void => {
+        if (this.state.running) return; //lock user from messing up state, but keep UI interactive
         let array = new Array(size);
         for(let i=0; i<size; i++) array[i] = Math.floor(Math.random() * size + 1);
         let didChange = new Array(size); 
@@ -96,47 +103,65 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
 
     startWorkers = (): void => {
+        if (this.state.running) return; //currently in render loop, prevent updates while keeping UI interactive
+        
+        //save local copy of state so I'm not creating data races
         const selectTag = (document.getElementById("sortSelect")) as HTMLSelectElement; //which algo
-        console.log('start workers');
+        let arr = this.state.array.slice(0); //google says this is fastest way to copy array
+        
         //typescript benchmark
-        this.state.tsWorker.postMessage([selectTag.value, this.state.array]);
+        this.state.tsWorker.postMessage([selectTag.value, arr]);
         //wasm benchmark courtesy of Rust
-        this.state.wasmWorker.postMessage([selectTag.value, this.state.array]);
+        this.state.wasmWorker.postMessage([selectTag.value, arr]);
         //animations
-        this.state.animationWorker.postMessage([selectTag.value, this.state.array]); //the worker copies anyway, so this copy may be unecessary
+        this.state.animationWorker.postMessage([selectTag.value, arr]); //the worker copies anyway, so this copy may be unecessary
     }
 
 
     startViz = (): void => {
-        let animations: Animation[] = this.state.animations;
-        
-        if (animations.length === 0) return; //bad selection or already sorted
+        let arr = this.state.array.slice(0); //google says this is fastest way to copy array
+        //save local copy of state so I'm not creating data races
+        let animations = this.state.animations;
 
-        for (let iter = 0; iter < animations.length; iter++) {
+        while (true) {
+            if (animations.length < 1)
+                break;
+            let last = false;
+            if (animations.length == 1)
+                last = true;
+            const animation = animations.shift();
+
+            let didChange = new Array(size); for (let j=0; j<size; j++) didChange[j] = 0;   //reset to 0 each time
+            let from = animation.from;
+            let to = animation.to;
+            if (from.length !== to.length) return; //should always be same length and mapping
+
+            let swap: number[] = [];
+            for (let j = 0; j < from.length; j++) {    //store swap numbers
+                swap.push(arr[from[ j ]]);
+                didChange[from[ j ]] = 1;
+            }
+            for (let j = 0; j < swap.length; j++) {
+                arr[to[ j ]] = swap[j];
+            }
+
+            //make deep copy for array ptr otherwise array gets sorted before any of the setTimeouts expire and the ptr refs the sorted array
+            const tempArr = new Array(arr.length); for(let j=0; j<arr.length; j++) tempArr[j] = arr[j];
+            
             setTimeout(
-                () => {
-                    let tempArray = this.state.array.slice(0); //google says this is fastest way to copy array
-                    let didChange = new Array(size); for (let i=0; i<size; ++i) didChange[i] = 0;   //reset to 0 each time
-                    let from = animations[iter].from;
-                    let to = animations[iter].to;
-                    if (from.length !== to.length) return; //should always be same length and mapping
-
-                    let swap: number[] = [];
-                    for (let jter = 0; jter < from.length; jter++) {    //store swap numbers
-                        swap.push(tempArray[from[jter]]);
-                        didChange[from[jter]] = 1;
-                    }
-                    for (let jter = 0; jter < swap.length; jter++) {
-                        tempArray[to[jter]] = swap[jter];
-                    }
+                (tempArr, didChange, last) => {
+                    console.log('timeout');
                     this.setState({
-                        array: tempArray,
-                        didChange: didChange
+                        array: tempArr,
+                        didChange: didChange,
+                        running: !last
                     });
                 }, 
-                3//ms to allow eye to follow
+                3,//ms to allow eye to follow
+                tempArr, didChange, last
             );
         }
+        this.setState({ animations: [] });
     }
 
 
