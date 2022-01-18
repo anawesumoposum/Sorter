@@ -1,4 +1,5 @@
 import * as wasm from "algorithms_in_rust_for_wasm";
+import { isCorrect } from './correctness';
 
 //export {};
 //const wasm = import("./asyncLoad.js")
@@ -35,6 +36,8 @@ self.addEventListener('message', (event: MessageEvent) => {
     array = JSON.parse( sort( temp ) );
     time = new Date().getTime() - time;
 
+    let correct = isCorrect(array);
+
     /* eslint-disable-next-line no-restricted-globals */
-    self.postMessage([time, array]);
+    self.postMessage([time, correct]);
 });

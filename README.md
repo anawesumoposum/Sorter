@@ -65,7 +65,7 @@ and navigate to http://localhost:8080/Sorter/
 <h3>TODO</h3>
     - wasm isn't currently callable in TS. At first I thought it was the loader, but I fixed that. Now I'm not sure 
     <br>
-    - add sorting correctness 
+    - getting to the point that I want state management in a separate module, too much logic is too spread around
     <br>
     - add a license, I'm thinking copyleft so GNU GPLv3
     <br>

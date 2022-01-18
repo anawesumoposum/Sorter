@@ -62,6 +62,8 @@ export default class Sorter extends React.Component<{}, SorterState> {
         // eslint-disable-next-line
         this.state.tsWorker.onmessage = (event: MessageEvent) => {
             console.log('ts worker responded');
+            if(event.data[1] === false)
+                console.log('ts worker sorted incorrectly');
             if (!this.state.running) 
                 this.setState({
                     tsTime: event.data[0],
@@ -71,6 +73,8 @@ export default class Sorter extends React.Component<{}, SorterState> {
         // eslint-disable-next-line
         this.state.wasmWorker.onmessage = (event: MessageEvent) => {
             console.log('wasm worker responded');
+            if(event.data[1] === false)
+                console.log('wasm worker sorted incorrectly');
             if (!this.state.running) 
                 this.setState({
                     wasmWorker: event.data[0],
@@ -150,7 +154,6 @@ export default class Sorter extends React.Component<{}, SorterState> {
             
             setTimeout(
                 (tempArr, didChange, last) => {
-                    console.log('timeout');
                     this.setState({
                         array: tempArr,
                         didChange: didChange,
@@ -183,6 +186,7 @@ export default class Sorter extends React.Component<{}, SorterState> {
                     <select id="sortSelect">
                         <option value="bubbleSort">Bubble Sort</option>
                         <option value='quickSort'>Quick Sort</option>
+                        <option value='shellSort'>Shell Sort</option>
                     </select>
                     <button onClick={this.startWorkers}>Sort</button>
                     <div id="benchmark0">Animation Time: {this.state.animationTime}ms</div>

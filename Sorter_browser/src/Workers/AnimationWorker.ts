@@ -1,5 +1,6 @@
 import { bubbleSortAnimation } from '../bubbleSort/bubbleSortAnimation';
 import { quickSortAnimation } from '../quickSort/quickSortAnimation';
+import { shellSort } from '../shellSort/shellSortAnimation';
 import { Animation } from '../Sorter/Sorter';
 
 /* eslint-disable-next-line no-restricted-globals */
@@ -17,11 +18,14 @@ self.addEventListener('message', (event: MessageEvent) => {
         case 'quickSort':
             sort = quickSortAnimation;
             break;
+        case 'shellSort':
+            sort = shellSort;
+            break;
         default:    //shouldn't ever hit this 
             console.log('The selected algorithm hasn\'t been implemented in an animation worker yet');
             console.log('Please feel free to submit a PR if you feel motivated to do so :)');
             sort = (array: number[]) => {
-                return array;
+                return [];
             }
     }
 

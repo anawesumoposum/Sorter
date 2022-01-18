@@ -16,7 +16,17 @@
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _bubbleSort_bubbleSort__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../bubbleSort/bubbleSort */ \"./src/bubbleSort/bubbleSort.ts\");\n/* harmony import */ var _quickSort_quickSort__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../quickSort/quickSort */ \"./src/quickSort/quickSort.ts\");\n\n\n/* eslint-disable-next-line no-restricted-globals */\nself.addEventListener('message', (event) => {\n    let tag = event.data[0];\n    let array = event.data[1];\n    let sort;\n    switch (tag) {\n        case 'bubbleSort':\n            sort = _bubbleSort_bubbleSort__WEBPACK_IMPORTED_MODULE_0__.bubbleSort;\n            break;\n        case 'quickSort':\n            sort = _quickSort_quickSort__WEBPACK_IMPORTED_MODULE_1__.quickSort;\n            break;\n        default: //shouldn't ever hit this \n            console.log('The selected algorithm hasn\\'t been implemented in a typescript worker yet');\n            console.log('Please feel free to submit a PR if you feel motivated to do so :)');\n            sort = (array) => {\n                return array;\n            };\n    }\n    let time = new Date().getTime();\n    array = sort(array);\n    time = new Date().getTime() - time;\n    /* eslint-disable-next-line no-restricted-globals */\n    self.postMessage([time, array]);\n});\n\n\n//# sourceURL=webpack://sorter_browser/./src/Workers/TypescriptWorker.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _bubbleSort_bubbleSort__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../bubbleSort/bubbleSort */ \"./src/bubbleSort/bubbleSort.ts\");\n/* harmony import */ var _quickSort_quickSort__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../quickSort/quickSort */ \"./src/quickSort/quickSort.ts\");\n/* harmony import */ var _shellSort_shellSort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shellSort/shellSort */ \"./src/shellSort/shellSort.ts\");\n/* harmony import */ var _correctness__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./correctness */ \"./src/Workers/correctness.ts\");\n\n\n\n\n/* eslint-disable-next-line no-restricted-globals */\nself.addEventListener('message', (event) => {\n    let tag = event.data[0];\n    let array = event.data[1];\n    let sort;\n    switch (tag) {\n        case 'bubbleSort':\n            sort = _bubbleSort_bubbleSort__WEBPACK_IMPORTED_MODULE_0__.bubbleSort;\n            break;\n        case 'quickSort':\n            sort = _quickSort_quickSort__WEBPACK_IMPORTED_MODULE_1__.quickSort;\n            break;\n        case 'shellSort':\n            sort = _shellSort_shellSort__WEBPACK_IMPORTED_MODULE_2__.shellSort;\n            break;\n        default: //shouldn't ever hit this \n            console.log('The selected algorithm hasn\\'t been implemented in a typescript worker yet');\n            console.log('Please feel free to submit a PR if you feel motivated to do so :)');\n            sort = (array) => {\n                return array;\n            };\n    }\n    let time = new Date().getTime();\n    array = sort(array);\n    time = new Date().getTime() - time;\n    let correct = (0,_correctness__WEBPACK_IMPORTED_MODULE_3__.isCorrect)(array);\n    /* eslint-disable-next-line no-restricted-globals */\n    self.postMessage([time, correct]);\n});\n\n\n//# sourceURL=webpack://sorter_browser/./src/Workers/TypescriptWorker.ts?");
+
+/***/ }),
+
+/***/ "./src/Workers/correctness.ts":
+/*!************************************!*\
+  !*** ./src/Workers/correctness.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"isCorrect\": () => (/* binding */ isCorrect)\n/* harmony export */ });\nfunction isCorrect(arr) {\n    if (arr.length < 1)\n        console.log(\"isCorrect was asked to check an empty array!\");\n    for (let i = 0; i < arr.length - 1; i++) {\n        if (arr[i] > arr[i + 1])\n            return false;\n    }\n    return true;\n}\n\n\n//# sourceURL=webpack://sorter_browser/./src/Workers/correctness.ts?");
 
 /***/ }),
 
@@ -37,6 +47,16 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"quickSort\": () => (/* binding */ quickSort)\n/* harmony export */ });\nfunction quickSort(array) {\n    if (array.length <= 1)\n        return array;\n    quickSortHelper(array, 0, array.length - 1);\n    return array;\n}\nfunction quickSortHelper(array, start, end) {\n    if (start >= end)\n        return;\n    let part = partition(array, start, end);\n    quickSortHelper(array, start, part);\n    quickSortHelper(array, part + 1, end);\n}\nfunction partition(array, start, end) {\n    let pivot = array[start];\n    let i = start - 1;\n    let j = end + 1;\n    while (true) {\n        while (true) {\n            if (array[++i] >= pivot)\n                break;\n        }\n        while (true) {\n            if (array[--j] <= pivot)\n                break;\n        }\n        if (i >= j)\n            return j;\n        [array[j], array[i]] = [array[i], array[j]];\n    }\n}\n\n\n//# sourceURL=webpack://sorter_browser/./src/quickSort/quickSort.ts?");
+
+/***/ }),
+
+/***/ "./src/shellSort/shellSort.ts":
+/*!************************************!*\
+  !*** ./src/shellSort/shellSort.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"shellSort\": () => (/* binding */ shellSort)\n/* harmony export */ });\nfunction shellSort(array) {\n    let hibbard = []; //hibbard's increments\n    let h = 1;\n    let idx = 1;\n    while (h < array.length) {\n        hibbard.push(h);\n        idx++;\n        h = 2 ^ idx - 1;\n    }\n    hibbard.forEach((gap) => {\n        for (let offset = 0; offset < gap; offset++) { //shell \n            for (let i = offset; i + gap < array.length; i += gap) { //outer loop of bubble\n                for (let j = offset; j < array.length - i - gap; j += gap) {\n                    if (i + gap < array.length) {\n                        if (array[j] > array[j + gap]) {\n                            let swap = array[j];\n                            array[j] = array[j + gap];\n                            array[j + gap] = swap;\n                        }\n                    }\n                }\n            }\n        }\n    });\n    return array;\n}\n\n\n//# sourceURL=webpack://sorter_browser/./src/shellSort/shellSort.ts?");
 
 /***/ })
 
