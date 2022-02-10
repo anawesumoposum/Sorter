@@ -10,7 +10,6 @@ const appConfig = {
     output: {
         filename: "bundle.js",
         path: path.resolve(__dirname, "Sorter"),
-        publicPath: "/Sorter/",
     },
     experiments: {
         syncWebAssembly: true,
@@ -19,7 +18,7 @@ const appConfig = {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
+                //exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
                     options: {
@@ -45,10 +44,6 @@ const appConfig = {
                 //type: "webassembly/experimental",
                 mimetype: "application/wasm",
                 use: 'wasm-loader',
-                    //loader: 'file-loader',
-                    //options: {
-                        //publicPath: "/prod/"
-                    //}
                 
             },
         ],

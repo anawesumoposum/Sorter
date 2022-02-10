@@ -63,13 +63,15 @@ and navigate to http://localhost:8080/Sorter/
 </p>
 
 <h3>TODO</h3>
-    - wasm isn't currently callable in TS. At first I thought it was the loader, but I fixed that. Now I'm not sure 
+    - resolve: modules in webpack.config.js? 
+    <br>
+    - wasm isn't currently callable in TS, but works fine on its own. At first I thought it was the loader, but I fixed that. Now I'm not sure 
     <br>
     - getting to the point that I want state management in a separate module, too much logic is too spread around
     <br>
     - add a license, I'm thinking copyleft so GNU GPLv3
     <br>
-    - header bar or side bar for routing, once routing is implemented I'll want to host on AWS for a unified portfolio domain and probably serve from node
+    - header bar or side bar for routing, once routing is implemented I'll want to host on AWS for a unified portfolio domain and probably serve from Next.js
     <br>
     - dynamic number of bars based on screen size? 
     <br>

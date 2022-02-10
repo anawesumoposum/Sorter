@@ -1,4 +1,4 @@
-import * as wasm from "algorithms_in_rust_for_wasm";
+import * as wasm from "../../node_modules/algorithms_in_rust_for_wasm";
 import { isCorrect } from './correctness';
 
 //export {};

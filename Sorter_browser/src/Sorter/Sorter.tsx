@@ -1,8 +1,8 @@
 import React from 'react';
 import './Sorter.css';
 
-const size = 300;
-
+//const size = 300; //approx right for 1920px screen width
+const size = Math.floor((screen.availWidth - 16) / 6);  //8px margin main bounding box, 4px per bar + 1px margin each side
 
 type SorterState = {
     array: number[];
@@ -178,7 +178,7 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
         return (
             <div>
-                <div id='sorterContainer' className="sorterContainer">
+                <div className="sorterContainer">
                     {bars}
                 </div>
                 <div>

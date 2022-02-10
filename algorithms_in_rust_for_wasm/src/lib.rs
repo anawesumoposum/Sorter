@@ -9,18 +9,6 @@ pub struct Arr {
     pub nums: Vec<i32>,
 }
 
-/*
-#[wasm_bindgen]
-pub fn bubblesort(arr: &mut [i32]) {
-    for i in 0..arr.len() {
-        for j in 0..arr.len() - i - 1 {
-            if arr[j] > arr[j + 1] {
-                arr.swap(j, j + 1)
-            }
-        }
-    }
-}*/
-
 
 #[wasm_bindgen]
 pub fn bubble_sort(arr: String) -> String {
