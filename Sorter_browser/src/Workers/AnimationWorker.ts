@@ -1,6 +1,7 @@
 import { bubbleSortAnimation } from '../bubbleSort/bubbleSortAnimation';
 import { quickSortAnimation } from '../quickSort/quickSortAnimation';
-import { shellSort } from '../shellSort/shellSortAnimation';
+import { shellSortAnimation } from '../shellSort/shellSortAnimation';
+import { heapSortAnimation } from '../heapSort/heapSortAnimation'; 
 import { Animation } from '../Sorter/Sorter';
 
 /* eslint-disable-next-line no-restricted-globals */
@@ -19,7 +20,10 @@ self.addEventListener('message', (event: MessageEvent) => {
             sort = quickSortAnimation;
             break;
         case 'shellSort':
-            sort = shellSort;
+            sort = shellSortAnimation;
+            break;
+        case 'heapSort':
+            sort = heapSortAnimation;
             break;
         default:    //shouldn't ever hit this 
             console.log('The selected algorithm hasn\'t been implemented in an animation worker yet');

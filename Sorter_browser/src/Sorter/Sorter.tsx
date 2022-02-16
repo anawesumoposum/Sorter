@@ -184,9 +184,10 @@ export default class Sorter extends React.Component<{}, SorterState> {
                 <div>
                     <button onClick={this.newArray}>Reset Random Array</button>
                     <select id="sortSelect">
-                        <option value="bubbleSort">Bubble Sort</option>
                         <option value='quickSort'>Quick Sort</option>
+                        <option value="bubbleSort">Bubble Sort</option>
                         <option value='shellSort'>Shell Sort</option>
+                        <option value='heapSort'>Heap Sort</option>
                     </select>
                     <button onClick={this.startWorkers}>Sort</button>
                     <div id="benchmark0">Animation Time: {this.state.animationTime}ms</div>

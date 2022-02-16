@@ -73,8 +73,4 @@ and navigate to http://localhost:8080/Sorter/
     <br>
     - header bar or side bar for routing, once routing is implemented I'll want to host on AWS for a unified portfolio domain and probably serve from Next.js
     <br>
-    - dynamic number of bars based on screen size? 
-    <br>
-    - slider bar for number of bars? 
-    <br>
     - way more sorts! 

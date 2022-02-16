@@ -1,6 +1,7 @@
 import { bubbleSort } from '../bubbleSort/bubbleSort';
 import { quickSort } from '../quickSort/quickSort';
 import { shellSort } from '../shellSort/shellSort';
+import { heapSort } from '../heapSort/heapSort';
 import { isCorrect } from './correctness';
 
 /* eslint-disable-next-line no-restricted-globals */
@@ -19,6 +20,9 @@ self.addEventListener('message', (event: MessageEvent) => {
             break;
         case 'shellSort':
             sort = shellSort;
+            break;
+        case 'heapSort':
+            sort = heapSort;
             break;
         default:    //shouldn't ever hit this 
             console.log('The selected algorithm hasn\'t been implemented in a typescript worker yet');
