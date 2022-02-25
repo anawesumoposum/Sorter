@@ -1,4 +1,4 @@
-import { Animation } from '../Sorter/Sorter';
+import { Animation } from '../../Sorter/Sorter';
 
 export function shellSortAnimation(array: number[]): Animation[] {
     let hibbard: number[] = []; //hibbard's increments

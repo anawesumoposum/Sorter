@@ -1,4 +1,4 @@
-import { Animation } from '../Sorter/Sorter';
+import { Animation } from '../../Sorter/Sorter';
 
 export function heapSortAnimation(array: number[]): Animation[] {
     let animations: Animation[] = [];
@@ -61,5 +61,5 @@ function swap(array: number[], i: number, j: number, animations: Animation[]) {
     let ptr = array[i];
     array[i] = array[j];
     array[j] = ptr;
-    animations.push( { from: [i, j], to: [j, i] } )
+    animations.push( { from: [i, j], to: [j, i] } );
 }

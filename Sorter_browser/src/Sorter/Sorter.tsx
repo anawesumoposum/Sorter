@@ -4,16 +4,20 @@ import './Sorter.css';
 //const size = 300; //approx right for 1920px screen width
 const size = Math.floor((screen.availWidth - 16) / 6);  //8px margin main bounding box, 4px per bar + 1px margin each side
 
+
 type SorterState = {
     array: number[];
     didChange: number[];
     running: boolean,
     tsWorker: Worker,
     tsTime: number,
+    tsResponded: boolean,
     wasmWorker: Worker,
     wasmTime: number,
+    wasmResponded: boolean,
     animationWorker: Worker;
     animationTime: number;
+    animationResponded: boolean,
     animations: Animation[];
 }
 
@@ -34,10 +38,13 @@ export default class Sorter extends React.Component<{}, SorterState> {
             running: false,
             tsWorker: new Worker(new URL("../Workers/TypescriptWorker.ts", import.meta.url)),
             tsTime: 0,
+            tsResponded: false,
             wasmWorker: new Worker(new URL("../Workers/WasmWorker.ts", import.meta.url)),
             wasmTime: 0,
+            wasmResponded: false,
             animationWorker: new Worker(new URL("../Workers/AnimationWorker.ts", import.meta.url)),
             animationTime: 0,
+            animationResponded: false,
             animations: [],
         };
     }
@@ -49,14 +56,11 @@ export default class Sorter extends React.Component<{}, SorterState> {
         // eslint-disable-next-line
         this.state.animationWorker.onmessage = (event: MessageEvent) => {
             console.log('animation worker responded');
-            if (!this.state.running)    //cleanup in case user clicks faster than setState can cut off new startWorkers calls
-                this.setState({
-                    animationTime: event.data[0],
-                    animations: event.data[1],
-                    running: true
-                },
-                    () => this.startViz() 
-                );
+            this.setState({
+                animationTime: event.data[0],
+                animations: event.data[1],
+                animationResponded: true,
+            });
         };
 
         // eslint-disable-next-line
@@ -64,10 +68,10 @@ export default class Sorter extends React.Component<{}, SorterState> {
             console.log('ts worker responded');
             if(event.data[1] === false)
                 console.log('ts worker sorted incorrectly');
-            if (!this.state.running) 
-                this.setState({
-                    tsTime: event.data[0],
-                });
+            this.setState({
+                tsTime: event.data[0],
+                tsResponded: true,
+            });
         }
 
         // eslint-disable-next-line
@@ -75,18 +79,23 @@ export default class Sorter extends React.Component<{}, SorterState> {
             console.log('wasm worker responded');
             if(event.data[1] === false)
                 console.log('wasm worker sorted incorrectly');
-            if (!this.state.running) 
-                this.setState({
-                    wasmWorker: event.data[0],
-                });
+            this.setState({
+                wasmTime: event.data[0],
+                wasmResponded: true,
+            });
         }
     }
 
-    
-    /*shouldComponentUpdate(nextState: SorterState) {
-        if(this.state.index === nextState.index) return false; //don't rerender
-        return true; //rerender
-    }*/
+
+    componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<SorterState>): void {
+        //TODO: wasmResponded is left out while it isn't working
+        if( !(prevState.animationResponded && prevState.tsResponded) &&     //if workers were incomplete
+         (this.state.animationResponded && this.state.tsResponded) ) {      //but are now complete
+            this.setState({ animationResponded: false, tsResponded: false, wasmResponded: false });
+            this.startViz();     
+        }             
+        
+    }
 
 
     newArray = (): void => {
@@ -108,17 +117,19 @@ export default class Sorter extends React.Component<{}, SorterState> {
 
     startWorkers = (): void => {
         if (this.state.running) return; //currently in render loop, prevent updates while keeping UI interactive
-        
-        //save local copy of state so I'm not creating data races
-        const selectTag = (document.getElementById("sortSelect")) as HTMLSelectElement; //which algo
-        let arr = this.state.array.slice(0); //google says this is fastest way to copy array
-        
-        //typescript benchmark
-        this.state.tsWorker.postMessage([selectTag.value, arr]);
-        //wasm benchmark courtesy of Rust
-        this.state.wasmWorker.postMessage([selectTag.value, arr]);
-        //animations
-        this.state.animationWorker.postMessage([selectTag.value, arr]); //the worker copies anyway, so this copy may be unecessary
+
+        this.setState({ tsTime: 0, wasmTime: 0, animationTime: 0, running: true }, () => {
+            //save local copy of state so I'm not creating data races
+            const selectTag = (document.getElementById("sortSelect")) as HTMLSelectElement; //which algo
+            let arr = this.state.array.slice(0); //google says this is fastest way to copy array
+            
+            //typescript benchmark
+            this.state.tsWorker.postMessage([selectTag.value, arr]);
+            //wasm benchmark courtesy of Rust
+            this.state.wasmWorker.postMessage([selectTag.value, arr]);
+            //animations
+            this.state.animationWorker.postMessage([selectTag.value, arr]); //the worker copies anyway, so this copy may be unecessary
+        });
     }
 
 
@@ -126,6 +137,10 @@ export default class Sorter extends React.Component<{}, SorterState> {
         let arr = this.state.array.slice(0); //google says this is fastest way to copy array
         //save local copy of state so I'm not creating data races
         let animations = this.state.animations;
+
+        //if no animations, turn off run flag and return early
+        if (animations.length < 1)
+            this.setState({ running: false });
 
         while (true) {
             if (animations.length < 1)
@@ -188,6 +203,8 @@ export default class Sorter extends React.Component<{}, SorterState> {
                         <option value="bubbleSort">Bubble Sort</option>
                         <option value='shellSort'>Shell Sort</option>
                         <option value='heapSort'>Heap Sort</option>
+                        <option value='insertionSort'>Insertion Sort</option>
+                        <option value='mergeSort'>Merge Sort</option>
                     </select>
                     <button onClick={this.startWorkers}>Sort</button>
                     <div id="benchmark0">Animation Time: {this.state.animationTime}ms</div>

@@ -1,4 +1,4 @@
-import { Animation } from '../Sorter/Sorter';
+import { Animation } from '../../Sorter/Sorter';
 
 export function bubbleSortAnimation(array: number[]): Animation[] {
     let animations: Animation[] = [];
