@@ -65,9 +65,7 @@ and navigate to http://localhost:8080/Sorter/
 <h3>TODO</h3>
     - resolve: modules in webpack.config.js? 
     <br>
-    - wasm isn't currently callable in TS, but works fine on its own. At first I thought it was the loader, but I fixed that. Now I'm not sure 
-    <br>
-    - getting to the point that I want state management in a separate module, too much logic is too spread around
+    - wasm isn't currently callable in TS, but works fine on its own. At first I thought it was the loader, fixed the loader, but it's still not being loaded correctly. Very uncertain. 
     <br>
     - add a license, I'm thinking copyleft so GNU GPLv3
     <br>

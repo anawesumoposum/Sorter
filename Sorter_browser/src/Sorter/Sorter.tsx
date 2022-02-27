@@ -3,7 +3,7 @@ import './Sorter.css';
 
 //const size = 300; //approx right for 1920px screen width
 const size = Math.floor((screen.availWidth - 16) / 6);  //8px margin main bounding box, 4px per bar + 1px margin each side
-
+//const size = 10;
 
 type SorterState = {
     array: number[];

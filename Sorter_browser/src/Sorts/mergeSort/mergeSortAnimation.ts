@@ -17,21 +17,29 @@ export const mergeSortAnimation = (array: number[]): Animation[] => {
     let animations: Animation[] = [];
     if (array.length <= 1) return animations;    //already sorted
 
+    let maxlen = array.length;
+
     let node = convertToLists(array, animations);       //I'm always going to have at least one ListNode in node
 
-    //while(node.next !== null)               //while there is more than 1 node
-    //    node = merge(node, node.next, animations);
-    
+    while(node.next !== null)               //while there is more than 1 node
+        node = merge(node, node.next, animations, maxlen);
+
+    //problem that the raw sort doesn't have: the offset won't necessarily be 0; 
+    //the final suriving ListNode may be the last one for all I know since I made it circular
+    //we need one final animation frame to shift the array around until offset is 0 again
+    if (node.offset !== 0)
+        animations.push( {  from: [...Array(node.array.length).keys()].map(i => (i + node.offset) % node.array.length), 
+                            to: [...Array(node.array.length).keys()].map(i => i) } );
+
     return animations;
 }
 
-const merge = (a: ListNode, b: ListNode, animations: Animation[]): ListNode => {
+const merge = (a: ListNode, b: ListNode, animations: Animation[], maxlen: number): ListNode => {
     //insertion sort for O(a+b)
     let i = 0;
     let j = 0;
     let k = 0;
     let merged = new Array(a.array.length + b.array.length); //faster than realloc
-    let minOffset = Math.min(a.offset, b.offset);
 
     //animation frames
     let from: number[] = [];
@@ -41,25 +49,26 @@ const merge = (a: ListNode, b: ListNode, animations: Animation[]): ListNode => {
         if (i < a.array.length && j < b.array.length) {
             if (a.array[i] <= b.array[j]) { //stable
                 merged[k] = a.array[i];
-                to.push( minOffset + k++ );
-                from.push( a.offset + i++ );
+                to.push( (a.offset + k++) % maxlen );
+                from.push( (a.offset + i++) % maxlen );
             } else {
                 merged[k] = b.array[j];
-                to.push( minOffset + k++ );
-                from.push( b.offset + j++ );
+                to.push( (a.offset + k++) % maxlen );
+                from.push( (b.offset + j++) % maxlen );
             }
         } else if (i < a.array.length) {
             merged[k] = a.array[i];
-            to.push( minOffset + k++ );
-            from.push( a.offset + i++ );
+            to.push( (a.offset + k++) % maxlen );
+            from.push( (a.offset + i++) % maxlen );
         } else if (j < b.array.length) {
             merged[k] = b.array[j];
-            to.push( minOffset + k++ );
-            from.push( b.offset + j++ );
+            to.push( (a.offset + k++) % maxlen );
+            from.push( (b.offset + j++) % maxlen );
         } else {
             break;
         }
     }
+
     a.array = merged;
 
     animations.push({ from: from, to: to});

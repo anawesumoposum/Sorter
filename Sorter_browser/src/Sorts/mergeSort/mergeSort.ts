@@ -17,7 +17,7 @@ export const mergeSort = (array: number[]): number[] => {
 
     while(node.next !== null)               //while there is more than 1 node
         node = merge(node, node.next);
-    
+
     return node.array;
 }
 
